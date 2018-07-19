@@ -4,9 +4,25 @@ print("================================\n")
 #globals
 DEFAULT_MASK = ['255','0','0','0'] #1st = 0, 2nd = 1 & so on
 BIT_ORDER = [128,64,32,16,8,4,2,1]
+DEDICATED_BITS = 24 #for node addresses, Class A
 
+def validate(addr):
+    import re
+    return True
+    """valid = False
+    if not valid:
+        raise InvalidAdressError('The addres cannot be parsed is that format. :()')
+    else:
+        return True
+"""
 def get():
-    net_addr = input("Network address: ").split(sep = '.') #Make a list, separating octets
+    try:
+        net_addr = input("Network address: ").split(sep = '.') #Make a list, separating octets
+        if validate(net_addr):
+            pass
+    except InvalidAdressError:
+        print("Provide a valid address: 0.0.0.0")
+        get()
     #print("Network address: %s"%(net_addr))
     num_of_subnets = int(input("Number of subnets: "))
     #print("Number  of subnets: %s"%(num_of_subnets))
@@ -129,14 +145,22 @@ def print_out():
     global cleaned_start_end
     data = cleaned_start_end
     index = 1
-    print("Subnet# \tStart address\tEnd address")
-    print("============================================")
+    print("Subnet# \tStart addr    \tEnd addr")
+    print("==============================================")
     for atuple in data:
         print("%d. \t%s\t\t%s"%(index,'.'.join(atuple[0]), '.'.join(atuple[1])))
         index+=1
 
 def main():
+    num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
     print_out()
+    print("===============================================")
+
+    print("\n\n")
+    print("Network address: %s\n"%('.'.join(NET_ADDRESS)))
+    print("Number of subnets: %d\n"%(NUM_OF_SUBNETS))
+    print("Available node addresses: %d\n"%(num_available_nodes))
+    print()
 
 
 if __name__ == "__main__":
