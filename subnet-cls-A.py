@@ -4,21 +4,20 @@ print("================================\n")
 #globals
 DEFAULT_MASK = ['255','0','0','0'] #1st = 0, 2nd = 1 & so on
 BIT_ORDER = [128,64,32,16,8,4,2,1]
-num_of_bits_stolen = bits_stolen()
-
-#global for IP ranges
-lowest_of_high_order_bits = min(BIT_ORDER[:num_of_bits_stolen])
-#print(lowest_of_high_order_bits)
-
 
 def get():
-    net_addr = input("Network address: ")
+    net_addr = input("Network address: ").split(sep = '.') #Make a list, separating octets
     #print("Network address: %s"%(net_addr))
     num_of_subnets = int(input("Number of subnets: "))
     #print("Number  of subnets: %s"%(num_of_subnets))
     return net_addr, num_of_subnets
 
+#user details
+NET_ADDRESS, NUM_OF_SUBNETS = get()
+
+print(NET_ADDRESS)
 def bits_stolen():
+    global NUM_OF_SUBNETS
     global BIT_ORDER
     num_of_bits_stolen = 0
     sum = 0
@@ -30,12 +29,13 @@ def bits_stolen():
             pos = -1*i
             sum+=BIT_ORDER[pos]
             num_of_bits_stolen+=1
-            if sum == num_of_subnets+1:
+            if sum == NUM_OF_SUBNETS+1:
                 break
     #print("Number of bits stolen: %d"%(num_of_bits_stolen))
 
     return num_of_bits_stolen
 
+NUM_OF_BITS_STOLEN = bits_stolen()
 
 #Lets find the new Network subnet mask
 #helper sum func
@@ -46,9 +46,9 @@ def sum(list):
     return sum
 
 def sub_net_mask():
-    global num_of_bits_stolen
+    global NUM_OF_BITS_STOLEN, DEFAULT_MASK
     #We add num_of_bits_stolen higher order bits to get the second octet of subnet mask
-    second_octet_mask = sum(BIT_ORDER[:num_of_bits_stolen])
+    second_octet_mask = sum(BIT_ORDER[:NUM_OF_BITS_STOLEN])
     #print(second_octet_mask)
     sub_network_mask = DEFAULT_MASK
     sub_network_mask[1] = str(second_octet_mask)
@@ -56,24 +56,48 @@ def sub_net_mask():
 
     return sub_network_mask
 
-def find_ranges(net_addr, octet_increment):
-    range_ips = []
-    for i in range(num_of_subnets):
+#global for IP ranges
+LOWEST_OF_HIGH_ORDER_BITS = min(BIT_ORDER[:NUM_OF_BITS_STOLEN])
+print(LOWEST_OF_HIGH_ORDER_BITS)
+
+def find_ranges():
+    #used a helper file because of an error I was yet to identify
+    outfile = open("file.txt", 'w')
+    global NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
+    net_addr,num_subnets, octet_increment = NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
+    for i in range(num_subnets):
         temp = net_addr
-        temp[1] = lowest_of_high_order_bits
-        sub_net_addr = temp
-        range_ips.append(sub_net_addr)
+        x_temp = int(temp[1])
+        x_temp += octet_increment #find starting range ==> uses lowest_of_high_order_bits
+        temp[1] = str(x_temp)
+        outfile.write(str(temp))
 
-    return range_ips
+    outfile.close()
 
+find_ranges()
+def load_and_dump():
+    import os
+    import os.path
+    filename = "file.txt"
+    if os.path.isfile(filename):
+        pass
+    else:
+        filename = open('file.txt', 'w+').close() #create it
+    ips = []
+    file = open(filename, 'r')
+    for aline in file.readlines():
+        ips.append(aline)
 
+    try:
+        file.close()
+        if len(ips) > 0:
+            file.close()
+            os.remove(filename) #Delete the useless file
+        else:
+            print("Empty list!")
+    except Exception as err:
+        print(err)
 
-def main(_addr, subnets):
-    _addr, subnets = get() #input for network address, number of subnets
-    print("Subnetted Newtwork mask: %s"%(sub_net_mask()))
-    find_ranges()
-
-
-
-if __name__ = "__main__":
-    main()
+    return ips
+range_ips = load_and_dump()
+print(len(range_ips))
