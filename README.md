@@ -17,6 +17,7 @@ TODO
 [] Create function to calculate new network subnet
 [] Create helper function to calculate range of IP addresses
 [] Create helper function to calculate number of available node addresses.
+[] Add a func to check for a valid net address
 [] Update TODO list
 
 
