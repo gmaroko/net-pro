@@ -15,7 +15,7 @@ def get():
 #user details
 NET_ADDRESS, NUM_OF_SUBNETS = get()
 
-print(NET_ADDRESS)
+#print(NET_ADDRESS)
 def bits_stolen():
     global NUM_OF_SUBNETS
     global BIT_ORDER
@@ -58,10 +58,11 @@ def sub_net_mask():
 
 #global for IP ranges
 LOWEST_OF_HIGH_ORDER_BITS = min(BIT_ORDER[:NUM_OF_BITS_STOLEN])
-print(LOWEST_OF_HIGH_ORDER_BITS)
+#print(LOWEST_OF_HIGH_ORDER_BITS)
 
 def find_ranges():
     #used a helper file because of an error I was yet to identify
+    newline = '\n'
     outfile = open("file.txt", 'w')
     global NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
     net_addr,num_subnets, octet_increment = NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
@@ -70,6 +71,7 @@ def find_ranges():
         x_temp = int(temp[1])
         x_temp += octet_increment #find starting range ==> uses lowest_of_high_order_bits
         temp[1] = str(x_temp)
+        outfile.write(newline)
         outfile.write(str(temp))
 
     outfile.close()
@@ -99,5 +101,43 @@ def load_and_dump():
         print(err)
 
     return ips
+
 range_ips = load_and_dump()
-print(len(range_ips))
+if '\n' in range_ips:
+    range_ips.remove('\n')
+
+def clean(range_list):
+    """
+    clean range IP ready for printing out
+    """
+    cleaned = []
+    for alist in range_list:
+        temp = () #startIP, EndIP
+        x_temp, y_temp = eval(alist), eval(alist) #x for start, y for end
+        x_temp[-1] = '1' #last bit to 1, to make it a node addresses
+        y_temp[-3] = str(int(x_temp[-3]) + (LOWEST_OF_HIGH_ORDER_BITS-1)) #the range, for exampe 10.8.0.1 - 10.15.255.254, 16 is left for broadcast/Network
+        y_temp[-2], y_temp[-1] = '255', '254' #==> 255.255.255.254
+        temp = (x_temp, y_temp)
+        #print(temp)
+        cleaned.append(temp)
+
+    return cleaned
+
+cleaned_start_end = clean(range_ips)
+
+def print_out():
+    global cleaned_start_end
+    data = cleaned_start_end
+    index = 1
+    print("Subnet# \tStart address\tEnd address")
+    print("============================================")
+    for atuple in data:
+        print("%d. \t%s\t\t%s"%(index,'.'.join(atuple[0]), '.'.join(atuple[1])))
+        index+=1
+
+def main():
+    print_out()
+
+
+if __name__ == "__main__":
+    main()
