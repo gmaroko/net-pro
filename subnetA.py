@@ -61,12 +61,11 @@ def sum(list):
         sum+=i
     return sum
 
-def sub_net_mask():
-    global NUM_OF_BITS_STOLEN, DEFAULT_MASK
+def sub_net_mask(def_mask, bits): #bits==NUM_OF_BITS_STOLEN
     #We add num_of_bits_stolen higher order bits to get the second octet of subnet mask
-    second_octet_mask = sum(BIT_ORDER[:NUM_OF_BITS_STOLEN])
+    second_octet_mask = sum(BIT_ORDER[:bits])
     #print(second_octet_mask)
-    sub_network_mask = DEFAULT_MASK
+    sub_network_mask = def_mask
     sub_network_mask[1] = str(second_octet_mask)
     sub_network_mask = '.'.join(sub_network_mask)
 
@@ -98,7 +97,8 @@ def load_and_dump():
     import os.path
     filename = "file.txt"
     if os.path.isfile(filename):
-        print("File check: OK")
+        #print("File check: OK")
+        pass
     else:
         new_file = open('file.txt', 'w+').close() #create it
         filename = "file.txt"
@@ -182,6 +182,7 @@ def main():
 
     print("\n\n")
     print("Network address: %s\n"%('.'.join(NET_ADDRESS)))
+    print("New subnet mask: %s\n"%(sub_net_mask(DEFAULT_MASK, NUM_OF_BITS_STOLEN)))
     print("Number of subnets: %d\n"%(NUM_OF_SUBNETS))
     print("Available node addresses: %d\n"%(num_available_nodes))
     print()
