@@ -5,9 +5,35 @@ Shared functions!
 print("================================\n")"""
 
 #globals
-DEFAULT_MASK = ['255','0','0','0'] #1st = 0, 2nd = 1 & so on
 BIT_ORDER = [128,64,32,16,8,4,2,1]
-DEDICATED_BITS = 24 #for node addresses, Class A
+
+def configure_values(a_class):
+    clsA, clsB, clsC = {}, {}, {} #store them as dict values
+
+    #class A
+    clsA['octet_for_subnet_mask'] = 1 #index == 2nd octet
+    clsA['dedicated_bits'] = 24
+    clsA['default_mask'] = ['255', '0', '0', '0'] #255.0.0.0
+
+    #class B
+    clsB['octet_for_subnet_mask'] = 2 #index == 3rd octet
+    clsB['dedicated_bits'] = 16
+    clsB['default_mask'] = ['255', '255', '0', '0'] #255.0.0.0
+
+    #class C
+    clsC['octet_for_subnet_mask'] = 3 #index == 2nd octet
+    clsC['dedicated_bits'] = 8
+    clsC['default_mask'] = ['255', '255', '255', '0'] #255.0.0.0
+
+    #avoid return all values to ease processing later
+    if a_class == 'A':
+        return clsA
+    elif a_class == 'B':
+        return clsB
+    elif a_class == 'C':
+        return clsC
+    else:
+        print("Unknown class!")
 
 def validate(addr):
     import re
@@ -64,12 +90,12 @@ def sum(list):
         sum+=i
     return sum
 
-def sub_net_mask(def_mask, bits): #bits==NUM_OF_BITS_STOLEN
+def sub_net_mask(def_mask, bits, nth_octet): #bits==NUM_OF_BITS_STOLEN, add nth_octet to resolve for different octets
     #We add num_of_bits_stolen higher order bits to get the second octet of subnet mask
-    second_octet_mask = sum(BIT_ORDER[:bits])
-    #print(second_octet_mask)
+    nth_octet_mask = sum(BIT_ORDER[:bits])
+    #print(nth_octet_mask)
     sub_network_mask = def_mask
-    sub_network_mask[1] = str(second_octet_mask)
+    sub_network_mask[nth_octet] = str(nth_octet_mask)
     sub_network_mask = '.'.join(sub_network_mask)
 
     return sub_network_mask
