@@ -30,3 +30,7 @@ def configure_values(a_class):
         return clsC
     else:
         print("Unknow class!")
+
+
+def main(addrs, num_subs, net_class): #intedning to use arg parse
+    conflict_values = configure_values(net_class)
