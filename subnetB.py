@@ -1,5 +1,4 @@
-from subnetA import get, bits_stolen, find_ranges, load_and_dump, clean, print_out, sub_net_mask
-
+from common import *
 #globals
 DEFAULT_MASK = ['255','255','0','0'] #1st = 0, 2nd = 1 & so on
 BIT_ORDER = [128,64,32,16,8,4,2,1]
