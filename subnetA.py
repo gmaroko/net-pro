@@ -1,5 +1,5 @@
-print("Subnetting class-A IP addresses\n")
-print("================================\n")
+"""print("Subnetting class-A IP addresses\n")
+print("================================\n")"""
 
 #globals
 DEFAULT_MASK = ['255','0','0','0'] #1st = 0, 2nd = 1 & so on
@@ -20,7 +20,7 @@ def get():
         net_addr = input("Network address: ").split(sep = '.') #Make a list, separating octets
         if validate(net_addr):
             pass
-    except InvalidAdressError:
+    except InvalidAdressError: #raised by validate
         print("Provide a valid address: 0.0.0.0")
         get()
     #print("Network address: %s"%(net_addr))
@@ -29,11 +29,11 @@ def get():
     return net_addr, num_of_subnets
 
 #user details
-NET_ADDRESS, NUM_OF_SUBNETS = get()
+#NET_ADDRESS, NUM_OF_SUBNETS = get()
 
 #print(NET_ADDRESS)
-def bits_stolen():
-    global NUM_OF_SUBNETS
+def bits_stolen(num_sub):
+    #global NUM_OF_SUBNETS
     global BIT_ORDER
     num_of_bits_stolen = 0
     sum = 0
@@ -45,13 +45,13 @@ def bits_stolen():
             pos = -1*i
             sum+=BIT_ORDER[pos]
             num_of_bits_stolen+=1
-            if sum == NUM_OF_SUBNETS+1:
+            if sum == num_sub+1:
                 break
     #print("Number of bits stolen: %d"%(num_of_bits_stolen))
 
     return num_of_bits_stolen
 
-NUM_OF_BITS_STOLEN = bits_stolen()
+#NUM_OF_BITS_STOLEN = bits_stolen()
 
 #Lets find the new Network subnet mask
 #helper sum func
@@ -73,15 +73,15 @@ def sub_net_mask():
     return sub_network_mask
 
 #global for IP ranges
-LOWEST_OF_HIGH_ORDER_BITS = min(BIT_ORDER[:NUM_OF_BITS_STOLEN])
+#LOWEST_OF_HIGH_ORDER_BITS = min(BIT_ORDER[:NUM_OF_BITS_STOLEN])
 #print(LOWEST_OF_HIGH_ORDER_BITS)
 
-def find_ranges():
+def find_ranges(net_addr,num_subnets, octet_increment): # octet_increment = LOWEST_OF_HIGH_ORDER_BITS
     #used a helper file because of an error I was yet to identify
     newline = '\n'
     outfile = open("file.txt", 'w')
-    global NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
-    net_addr,num_subnets, octet_increment = NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
+    #global NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
+    #net_addr,num_subnets, octet_increment = NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS
     for i in range(num_subnets):
         temp = net_addr
         x_temp = int(temp[1])
@@ -92,19 +92,25 @@ def find_ranges():
 
     outfile.close()
 
-find_ranges()
+#find_ranges()
 def load_and_dump():
     import os
     import os.path
     filename = "file.txt"
     if os.path.isfile(filename):
-        pass
+        print("File check: OK")
     else:
-        filename = open('file.txt', 'w+').close() #create it
+        new_file = open('file.txt', 'w+').close() #create it
+        filename = "file.txt"
+
     ips = []
-    file = open(filename, 'r')
-    for aline in file.readlines():
-        ips.append(aline)
+
+    try:
+        file = open(filename, 'r')
+        for aline in file.readlines():
+            ips.append(aline)
+    except Exception as err:
+        print(err)
 
     try:
         file.close()
@@ -118,11 +124,11 @@ def load_and_dump():
 
     return ips
 
-range_ips = load_and_dump()
-if '\n' in range_ips:
-    range_ips.remove('\n')
+#range_ips = load_and_dump()
+#if '\n' in range_ips:
+#    range_ips.remove('\n')
 
-def clean(range_list):
+def clean(range_list, lowest_of_bo): #lowest_of_bo == LOWEST_OF_HIGH_ORDER_BITS
     """
     clean range IP ready for printing out
     """
@@ -131,7 +137,7 @@ def clean(range_list):
         temp = () #startIP, EndIP
         x_temp, y_temp = eval(alist), eval(alist) #x for start, y for end
         x_temp[-1] = '1' #last bit to 1, to make it a node addresses
-        y_temp[-3] = str(int(x_temp[-3]) + (LOWEST_OF_HIGH_ORDER_BITS-1)) #the range, for exampe 10.8.0.1 - 10.15.255.254, 16 is left for broadcast/Network
+        y_temp[-3] = str(int(x_temp[-3]) + (lowest_of_bo-1)) #the range, for exampe 10.8.0.1 - 10.15.255.254, 16 is left for broadcast/Network
         y_temp[-2], y_temp[-1] = '255', '254' #==> 255.255.255.254
         temp = (x_temp, y_temp)
         #print(temp)
@@ -139,11 +145,10 @@ def clean(range_list):
 
     return cleaned
 
-cleaned_start_end = clean(range_ips)
+#cleaned_start_end = clean(range_ips)
 
-def print_out():
-    global cleaned_start_end
-    data = cleaned_start_end
+def print_out(cleaned):
+    data = cleaned
     index = 1
     print("Subnet# \tStart addr    \tEnd addr")
     print("==============================================")
@@ -152,8 +157,27 @@ def print_out():
         index+=1
 
 def main():
+    #num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
+
+    #calling non func step by step as prev called outside functions to solve import issues
+    #user details
+    NET_ADDRESS, NUM_OF_SUBNETS = get()
+    #bits stolen
+    NUM_OF_BITS_STOLEN = bits_stolen(NUM_OF_SUBNETS)
+    #global for IP ranges
+    LOWEST_OF_HIGH_ORDER_BITS = min(BIT_ORDER[:NUM_OF_BITS_STOLEN])
+    #print(LOWEST_OF_HIGH_ORDER_BITS)
+    find_ranges(NET_ADDRESS, NUM_OF_SUBNETS, LOWEST_OF_HIGH_ORDER_BITS)
+
+    range_ips = load_and_dump()
+    if '\n' in range_ips:
+        range_ips.remove('\n')
+
+
+    cleaned_start_end = clean(range_ips, LOWEST_OF_HIGH_ORDER_BITS)
     num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
-    print_out()
+
+    print_out(cleaned_start_end)
     print("===============================================")
 
     print("\n\n")
