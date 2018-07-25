@@ -1,10 +1,12 @@
 from common import *
 #globals
-DEFAULT_MASK = ['255','0','0','0'] #1st = 0, 2nd = 1 & so on
-BIT_ORDER = [128,64,32,16,8,4,2,1]
-DEDICATED_BITS = 24 #for node addresses, Class A
+def default_value():
+    setup = configure_values('A') #a dictionary of default values
+    DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET= setup['default_mask'], setup['dedicated_bits'], setup['octet_for_subnet_mask']
+    return DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET
 
 def main():
+    DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = default_value()
     #num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
 
     #calling non func step by step as prev called outside functions to solve import issues
@@ -30,7 +32,7 @@ def main():
 
     print("\n\n")
     print("Network address: %s\n"%('.'.join(NET_ADDRESS)))
-    print("New subnet mask: %s\n"%(sub_net_mask(DEFAULT_MASK, NUM_OF_BITS_STOLEN)))
+    print("New subnet mask: %s\n"%(sub_net_mask(DEFAULT_MASK, NUM_OF_BITS_STOLEN, SUBNET_OCTET)))
     print("Number of subnets: %d\n"%(NUM_OF_SUBNETS))
     print("Available node addresses: %d\n"%(num_available_nodes))
     print()
