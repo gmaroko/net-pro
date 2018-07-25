@@ -1,3 +1,4 @@
+import common, subnetA, subnetB
 """
 Start of script
 Act as a helper to resolve conflict of different values for different classes: eg octets!
@@ -32,5 +33,5 @@ def configure_values(a_class):
         print("Unknow class!")
 
 
-def main(addrs, num_subs, net_class): #intedning to use arg parse
+def main(addrs, num_subs, net_class): #intedning to use argparse
     conflict_values = configure_values(net_class)
