@@ -36,10 +36,12 @@ def configure_values(a_class):
 
 
 def main(): #intending to use argparse
+    BIT_ORDER= [128,64,32,16,8,4,2,1]
     parser = argparse.ArgumentParser()
     parser.add_argument("netaddres", help="The network address to be subnetted!")
-    parser.add_argument("subnets", help="Number of desired subnets!") #must accomodate the available - for future
-    parser.add_argument("-c", "--class", help="IP Class", choices=['A','B','C'])
+    parser.add_argument("subnets", type=int,help="Number of desired subnets!",) #must accomodate the available - for future
+    parser.add_argument("-c", "--class", choices=['A','B','C'], help="IP Class")
+
     net_details = parser.parse_args()
     if net_details.class == "A":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.0.0.0", 24, 1
@@ -47,13 +49,8 @@ def main(): #intending to use argparse
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.0.0", 16, 2
     elif net_details.class == "C":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.255.0", 8, 3
-        
 
-    #num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
-    DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = default_value()
-    #calling non func step by step as prev called outside functions to solve import issues
-    #user details
-    NET_ADDRESS, NUM_OF_SUBNETS = get()
+    NET_ADDRESS, NUM_OF_SUBNETS = net_details.netaddres, net_details.subnets
     #bits stolen
     NUM_OF_BITS_STOLEN = bits_stolen(NUM_OF_SUBNETS)
     #global for IP ranges
