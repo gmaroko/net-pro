@@ -39,7 +39,10 @@ def main(): #intending to use argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("netaddres", help="The network address to be subnetted!")
     parser.add_argument("subnets", help="Number of desired subnets!") #must accomodate the available - for future
-    parser.add_argument("-c", "-class", help="IP Class")
+    parser.add_argument("-c", "--class", help="IP Class", choices=['A','B','C'])
+    inputs = parser.parse_args()
+
+    print(inputs)
 
 
 
