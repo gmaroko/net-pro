@@ -41,6 +41,13 @@ def main(): #intending to use argparse
     parser.add_argument("subnets", help="Number of desired subnets!") #must accomodate the available - for future
     parser.add_argument("-c", "--class", help="IP Class", choices=['A','B','C'])
     net_details = parser.parse_args()
+    if net_details.class == "A":
+        DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.0.0.0", 24, 1
+    elif net_details.class == "B":
+        DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.0.0", 16, 2
+    elif net_details.class == "C":
+        DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.255.0", 8, 3
+        
 
     #num_available_nodes = 2**(DEDICATED_BITS-NUM_OF_BITS_STOLEN) - 2
     DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = default_value()
