@@ -1,7 +1,7 @@
 """
 Shared functions!
 """
-"""print("Subnetting class-A IP addresses\n")
+"""print("Subnetting class-X IP addresses\n")
 print("================================\n")"""
 
 #globals
