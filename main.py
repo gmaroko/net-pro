@@ -1,6 +1,5 @@
 import argparse
-#import common, subnetA, subnetB
-
+from common import *
 """
 Start of script
 Act as a helper to resolve conflict of different values for different classes: eg octets!
@@ -39,7 +38,7 @@ def main(): #intending to use argparse
     BIT_ORDER= [128,64,32,16,8,4,2,1]
     parser = argparse.ArgumentParser()
     parser.add_argument("netaddres", help="The network address to be subnetted!")
-    parser.add_argument("subnets", type=int,help="Number of desired subnets!",) #must accomodate the available - for future
+    parser.add_argument("subnets", type=int ,help="Number of desired subnets!") #must accomodate the available - for future
     parser.add_argument("-c", "--class-ip", choices=['A','B','C'], help="IP Class")
 
     net_details = parser.parse_args()
@@ -51,7 +50,7 @@ def main(): #intending to use argparse
     elif net_details.class_ip == "C":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.255.0", 8, 3
 
-    NET_ADDRESS, NUM_OF_SUBNETS = net_details.netaddres, net_details.subnets
+    NET_ADDRESS, NUM_OF_SUBNETS = net_details.netaddres.split(sep="."), net_details.subnets
     #bits stolen
     NUM_OF_BITS_STOLEN = bits_stolen(NUM_OF_SUBNETS)
     #global for IP ranges
