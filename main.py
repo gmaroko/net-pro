@@ -1,4 +1,6 @@
-import common, subnetA, subnetB
+import argparse
+#import common, subnetA, subnetB
+
 """
 Start of script
 Act as a helper to resolve conflict of different values for different classes: eg octets!
@@ -33,5 +35,15 @@ def configure_values(a_class):
         print("Unknow class!")
 
 
-def main(addrs, num_subs, net_class): #intedning to use argparse
-    conflict_values = configure_values(net_class)
+def main(): #intending to use argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("netaddres", help="The network address to be subnetted!")
+    parser.add_argument("subnets", help="Number of desired subnets!") #must accomodate the available - for future
+    parser.add_argument("-c", "-class", help="IP Class")
+
+
+
+
+
+if __name__ == "__main__":
+    main()
