@@ -42,7 +42,7 @@ def main(): #intending to use argparse
     parser.add_argument("-c", "--class-ip", choices=['A','B','C', 'a', 'b', 'c'], help="IP Class")
 
     net_details = parser.parse_args()
-    
+
     if net_details.class_ip == "A" or "a":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.0.0.0", 24, 1
     elif net_details.class_ip == "B" or "b":
