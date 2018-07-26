@@ -40,14 +40,15 @@ def main(): #intending to use argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("netaddres", help="The network address to be subnetted!")
     parser.add_argument("subnets", type=int,help="Number of desired subnets!",) #must accomodate the available - for future
-    parser.add_argument("-c", "--class", choices=['A','B','C'], help="IP Class")
+    parser.add_argument("-c", "--class-ip", choices=['A','B','C'], help="IP Class")
 
     net_details = parser.parse_args()
-    if net_details.class == "A":
+    print(net_details)
+    if net_details.class_ip == "A":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.0.0.0", 24, 1
-    elif net_details.class == "B":
+    elif net_details.class_ip == "B":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.0.0", 16, 2
-    elif net_details.class == "C":
+    elif net_details.class_ip == "C":
         DEFAULT_MASK, DEDICATED_BITS, SUBNET_OCTET = "255.255.255.0", 8, 3
 
     NET_ADDRESS, NUM_OF_SUBNETS = net_details.netaddres, net_details.subnets
