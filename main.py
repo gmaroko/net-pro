@@ -71,7 +71,7 @@ def main(): #intending to use argparse
 
     print("\n\n")
     print("Network address: %s\n"%('.'.join(NET_ADDRESS)))
-    print("New subnet mask: %s\n"%(sub_net_mask(DEFAULT_MASK, NUM_OF_BITS_STOLEN, SUBNET_OCTET)))
+    print("New subnet mask: %s\n"%(sub_net_mask(DEFAULT_MASK.split(sep="."), NUM_OF_BITS_STOLEN, SUBNET_OCTET)))
     print("Number of subnets: %d\n"%(NUM_OF_SUBNETS))
     print("Available node addresses: %d\n"%(num_available_nodes))
     print()
